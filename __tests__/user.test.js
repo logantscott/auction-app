@@ -21,7 +21,12 @@ describe('auction-app routes', () => {
     return mongod.stop();
   });
   
-  it('does a thing', () => {
+  it('can create a user', () => {
+    return expect('hi').toBe('hi');
+  });
+
+  // probably the hardest route test
+  it('can authenticate a user and log them in', () => {
     return expect('hi').toBe('hi');
   });
 });

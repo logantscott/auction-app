@@ -21,7 +21,15 @@ describe('auction-app routes', () => {
     return mongod.stop();
   });
   
-  it('does a thing', () => {
+  it('can create a bid', () => {
+    return expect('hi').toBe('hi');
+  });
+
+  it('can get a bid by id', () => {
+    return expect('hi').toBe('hi');
+  });
+
+  it('can delete a bid', () => {
     return expect('hi').toBe('hi');
   });
 });

@@ -21,7 +21,15 @@ describe('auction-app routes', () => {
     return mongod.stop();
   });
   
-  it('does a thing', () => {
+  it('can create an auction', () => {
+    return expect('hi').toBe('hi');
+  });
+
+  it('can get an auction by id', () => {
+    return expect('hi').toBe('hi');
+  });
+
+  it('can get all auctions', () => {
     return expect('hi').toBe('hi');
   });
 });
