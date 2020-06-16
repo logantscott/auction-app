@@ -20,8 +20,8 @@ describe('auction-app routes', () => {
     await mongoose.connection.close();
     return mongod.stop();
   });
-});
-
-it('does a thing', () => {
-  return expect('hi').toBe('hi');
+  
+  it('does a thing', () => {
+    return expect('hi').toBe('hi');
+  });
 });
