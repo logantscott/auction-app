@@ -54,7 +54,7 @@ describe('auction-app routes', () => {
   });
 
   it('can get an auction by id', () => {
-    return expect('hi').toBe('hi');
+    return expect('hi').toBe('bye');
   });
 
   it('can get all auctions', () => {

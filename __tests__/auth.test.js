@@ -22,7 +22,17 @@ describe('auction-app routes', () => {
   });
   
   it('can create a user', () => {
-    return expect('hi').toBe('hi');
+    return request(app)
+      .post('/api/v1/auth')
+      .send({
+        email: 'logan@test.com',
+        password: '1234'
+      })
+      .then(res => expect(res.body).toEqual({
+        _id: expect.anything(),
+        email: 'logan@test.com',
+        passwordHash: expect.anything()
+      }));
   });
 
   // probably the hardest route test
