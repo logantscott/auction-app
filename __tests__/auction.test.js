@@ -7,6 +7,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Auction = require('../lib/models/Auction');
+const Bid = require('../lib/models/Bid');
 const date = new Date();
 
 describe('auction-app routes', () => {
@@ -136,6 +137,32 @@ describe('auction-app routes', () => {
         endDate: date
       });
 
+    const bids = [
+      {
+        auction: auction.id,
+        user: user.id,
+        price: 31,
+        quantity: 1,
+        accepted: false
+      },
+      {
+        auction: auction.id,
+        user: user.id,
+        price: 42,
+        quantity: 1,
+        accepted: false
+      },
+      {
+        auction: auction.id,
+        user: user.id,
+        price: 43,
+        quantity: 1,
+        accepted: true
+      }
+    ];
+
+    await Bid.create(bids);
+
     return request(app)
       .get(`/api/v1/auctions/${auction.id}`)
       .then(res => {
@@ -149,9 +176,11 @@ describe('auction-app routes', () => {
         description: 'some boring thing being sold',
         quantity: 2,
         endDate: Date(date.toString()),
-        bids: {
-
-        },
+        bids: bids.map(bid => {
+          bid._id = expect.anything();
+          bid.__v = 0;
+          return bid;
+        }),
         __v: 0
       }));
   });
