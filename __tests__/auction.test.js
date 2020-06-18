@@ -6,6 +6,7 @@ const connect = require('../lib/utils/connect');
 const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
+const Auction = require('../lib/models/Auction');
 
 describe('auction-app routes', () => {
   beforeAll(async() => {
@@ -15,6 +16,11 @@ describe('auction-app routes', () => {
 
   beforeEach(() => {
     return mongoose.connection.dropDatabase();
+  });
+
+  let date;
+  beforeEach(() => {
+    date = new Date();
   });
 
   let user;
@@ -32,7 +38,7 @@ describe('auction-app routes', () => {
     return mongod.stop();
   });
   
-  it('can create an auction', () => {
+  it('can create an auction', async() => {
     return request(app)
       .post('/api/v1/auctions')
       .send({
@@ -40,24 +46,89 @@ describe('auction-app routes', () => {
         title: 'my first auction',
         description: 'some boring thing being sold',
         quantity: 2,
-        endDate: Date.now()
+        endDate: date
       })
-      .then(res => expect(res.body).toEqual({
-        _id: expect.anything(),
-        user: user.id,
-        title: 'my first auction',
-        description: 'some boring thing being sold',
-        quantity: 2,
-        endDate: expect.anything(),
-        __v: 0
-      }));
+      .then(res => {
+        res.body.endDate = Date(res.body.endDate);
+        return res;
+      })
+      .then(async(res) => {
+        // console.log(typeof(date), typeof(res.body.endDate));
+        return expect(res.body).toEqual({
+          _id: expect.anything(),
+          user: user.id,
+          title: 'my first auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date.toString(),
+          __v: 0
+        });
+      });
   });
 
-  it('can get an auction by id', () => {
-    return expect('hi').toBe('bye');
+  it('can get an auction by id and all bids', () => {
+    Auction
+      .create([
+        {
+          user: user.id,
+          title: 'my first auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date
+        }, {
+          user: user.id,
+          title: 'my second auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date
+        }, {
+          user: user.id,
+          title: 'my third auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date
+        }
+      ]);
+    return request(app)
+      .post('/api/v1/auctions')
+      .send({})
+      .then(auctions => {
+        auctions.body.map(auction => {
+          auction.endDate = Date(auction.endDate);
+          return auction;
+        });
+        return auctions;
+      })
+      .then(res => expect(res.body).toEqual([
+        {
+          _id: expect.anything(),
+          user: user.id,
+          title: 'my first auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date.toString(),
+          __v: 0
+        }, {
+          _id: expect.anything(),
+          user: user.id,
+          title: 'my second auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date.toString(),
+          __v: 0
+        }, {
+          _id: expect.anything(),
+          user: user.id,
+          title: 'my third auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: date.toString(),
+          __v: 0
+        }
+      ]));
   });
 
   it('can get all auctions', () => {
-    return expect('hi').toBe('hi');
+    return expect('hi').toBe('bye');
   });
 });

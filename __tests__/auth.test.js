@@ -31,7 +31,9 @@ describe('auction-app routes', () => {
       .then(res => expect(res.body).toEqual({
         _id: expect.anything(),
         email: 'logan@test.com',
-        passwordHash: expect.anything()
+        // block password with toJSON transform
+        // passwordHash: expect.anything(),
+        __v: 0
       }));
   });
 
