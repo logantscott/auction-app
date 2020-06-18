@@ -45,6 +45,10 @@ describe('auction-app routes', () => {
         description: 'some boring thing being sold',
         quantity: 2,
         endDate: date
+      })
+      .then(res => {
+        res.endDate = Date(res.endDate);
+        return res;
       });
     
     bids = await Bid
@@ -100,7 +104,28 @@ describe('auction-app routes', () => {
   });
 
   it('can get a bid by id with user and auction details', () => {
-    return expect('hi').toBe('bye');
+    return request(app)
+      .get(`/api/v1/bids/${bids[2].id}`)
+      .then(res => expect(res.body).toEqual({
+        _id: expect.anything(),
+        auction: {
+          _id: auction.id,
+          user: users[2].id,
+          title: 'my first auction',
+          description: 'some boring thing being sold',
+          quantity: 2,
+          endDate: JSON.parse(JSON.stringify(date)),
+          __v: 0
+        },
+        user: {
+          _id: users[0].id,
+          email: 'user1@test.com'
+        },
+        price: 43,
+        quantity: 1,
+        accepted: true,
+        __v: 0
+      }));
   });
 
   it('can delete a bid', () => {

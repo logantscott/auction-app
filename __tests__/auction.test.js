@@ -46,10 +46,6 @@ describe('auction-app routes', () => {
         quantity: 2,
         endDate: date
       })
-      .then(res => {
-        res.body.endDate = Date(res.body.endDate);
-        return res;
-      })
       .then(async(res) => {
         // console.log(typeof(date), typeof(res.body.endDate));
         return expect(res.body).toEqual({
@@ -58,7 +54,7 @@ describe('auction-app routes', () => {
           title: 'my first auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: Date(date.toString()),
+          endDate: JSON.parse(JSON.stringify(date)),
           __v: 0
         });
       });
@@ -91,13 +87,6 @@ describe('auction-app routes', () => {
     return request(app)
       .get('/api/v1/auctions')
       .send({})
-      .then(auctions => {
-        auctions.body.map(auction => {
-          auction.endDate = Date(auction.endDate);
-          return auction;
-        });
-        return auctions;
-      })
       .then(res => expect(res.body).toEqual([
         {
           _id: expect.anything(),
@@ -105,7 +94,7 @@ describe('auction-app routes', () => {
           title: 'my first auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: Date(date.toString()),
+          endDate: JSON.parse(JSON.stringify(date)),
           __v: 0
         }, {
           _id: expect.anything(),
@@ -113,7 +102,7 @@ describe('auction-app routes', () => {
           title: 'my second auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: Date(date.toString()),
+          endDate: JSON.parse(JSON.stringify(date)),
           __v: 0
         }, {
           _id: expect.anything(),
@@ -121,7 +110,7 @@ describe('auction-app routes', () => {
           title: 'my third auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: Date(date.toString()),
+          endDate: JSON.parse(JSON.stringify(date)),
           __v: 0
         }
       ]));
@@ -165,17 +154,13 @@ describe('auction-app routes', () => {
 
     return request(app)
       .get(`/api/v1/auctions/${auction.id}`)
-      .then(res => {
-        res.body.endDate = Date(res.body.endDate);
-        return res;
-      })
       .then(res => expect(res.body).toEqual({
         _id: expect.anything(),
         user: user.id,
         title: 'my fourth auction',
         description: 'some boring thing being sold',
         quantity: 2,
-        endDate: Date(date.toString()),
+        endDate: JSON.parse(JSON.stringify(date)),
         bids: bids.map(bid => {
           bid._id = expect.anything();
           bid.__v = 0;
