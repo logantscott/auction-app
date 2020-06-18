@@ -5,6 +5,10 @@ const connect = require('../lib/utils/connect');
 
 const request = require('supertest');
 const app = require('../lib/app');
+const Bid = require('../lib/models/Bid');
+const User = require('../lib/models/User');
+const Auction = require('../lib/models/Auction');
+const date = new Date();
 
 describe('auction-app routes', () => {
   beforeAll(async() => {
@@ -16,20 +20,90 @@ describe('auction-app routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
+  let users, auction, bids;
+  beforeEach(async() => {
+    users = await User
+      .create([
+        {
+          email: 'user1@test.com',
+          password: '1234'
+        },
+        {
+          email: 'user2@test.com',
+          password: '5678'
+        },
+        {
+          email: 'user3@test.com',
+          password: '9abc'
+        }
+      ]);
+
+    auction = await Auction
+      .create({
+        user: users[2].id,
+        title: 'my first auction',
+        description: 'some boring thing being sold',
+        quantity: 2,
+        endDate: date
+      });
+    
+    bids = await Bid
+      .create([
+        {
+          auction: auction.id,
+          user: users[0].id,
+          price: 31,
+          quantity: 1,
+          accepted: false
+        },
+        {
+          auction: auction.id,
+          user: users[1].id,
+          price: 42,
+          quantity: 1,
+          accepted: false
+        },
+        {
+          auction: auction.id,
+          user: users[0].id,
+          price: 43,
+          quantity: 1,
+          accepted: true
+        }
+      ]);
+  });
+
   afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
   
   it('can create a bid', () => {
-    return expect('hi').toBe('hi');
+    return request(app)
+      .post('/api/v1/bids')
+      .send({
+        auction: auction.id,
+        user: users[0].id,
+        price: 31,
+        quantity: 1,
+        accepted: false
+      })
+      .then(res => expect(res.body).toEqual({
+        _id: expect.anything(),
+        auction: auction.id,
+        user: users[0].id,
+        price: 31,
+        quantity: 1,
+        accepted: false,
+        __v: 0
+      }));
   });
 
-  it('can get a bid by id', () => {
-    return expect('hi').toBe('hi');
+  it('can get a bid by id with user and auction details', () => {
+    return expect('hi').toBe('bye');
   });
 
   it('can delete a bid', () => {
-    return expect('hi').toBe('hi');
+    return expect('hi').toBe('bye');
   });
 });
