@@ -129,6 +129,16 @@ describe('auction-app routes', () => {
   });
 
   it('can delete a bid', () => {
-    return expect('hi').toBe('bye');
+    return request(app)
+      .delete(`/api/v1/bids/${bids[2].id}`)
+      .then(res => expect(res.body).toEqual({
+        _id: bids[2].id,
+        auction: auction.id,
+        user: users[0].id,
+        price: 43,
+        quantity: 1,
+        accepted: true,
+        __v: 0
+      }));
   });
 });
