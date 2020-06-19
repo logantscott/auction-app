@@ -8,7 +8,10 @@ const app = require('../lib/app');
 const Bid = require('../lib/models/Bid');
 const User = require('../lib/models/User');
 const Auction = require('../lib/models/Auction');
-const date = new Date();
+let date = new Date();
+const expiredDate = date.setTime(date.getTime() - (1000 * 60));
+date = date.setTime(date.getTime() + (1000 * 60 * 60 * 24 * 7));
+console.log('datesssssssssssssssss', new Date(date).toISOString(), new Date(expiredDate).toISOString(), new Date());
 
 describe('auction-app routes', () => {
   beforeAll(async() => {
@@ -20,7 +23,7 @@ describe('auction-app routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  let users, auction, bids;
+  let users, auction, bids, expiredAuction;
   beforeEach(async() => {
     users = await User
       .create([
@@ -50,6 +53,16 @@ describe('auction-app routes', () => {
         res.endDate = Date(res.endDate);
         return res;
       });
+
+    expiredAuction = await Auction
+      .create({
+        user: users[2].id,
+        title: 'my first auction',
+        description: 'some boring thing being sold',
+        quantity: 2,
+        endDate: expiredDate
+      })
+      .then(res => res);
     
     bids = await Bid
       .create([
@@ -114,7 +127,7 @@ describe('auction-app routes', () => {
           title: 'my first auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: JSON.parse(JSON.stringify(date)),
+          endDate: new Date(date).toISOString(),
           __v: 0
         },
         user: {
@@ -140,5 +153,21 @@ describe('auction-app routes', () => {
         accepted: true,
         __v: 0
       }));
+  });
+
+  it('can not create a bid on an expired auction', () => {
+    return request(app)
+      .post('/api/v1/bids')
+      .send({
+        auction: expiredAuction.id,
+        user: users[0].id,
+        price: 31,
+        quantity: 1,
+        accepted: false
+      })
+      .then(res => {
+        expect(res.status).toBe(400);
+        return expect(res.body.message).toEqual('Bid validation failed: auction: This auction has expired!');
+      });
   });
 });

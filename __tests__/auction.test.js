@@ -8,7 +8,8 @@ const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Auction = require('../lib/models/Auction');
 const Bid = require('../lib/models/Bid');
-const date = new Date();
+let date = new Date();
+date = date.setDate(date.getDate() + 7);
 
 describe('auction-app routes', () => {
   beforeAll(async() => {
@@ -54,7 +55,7 @@ describe('auction-app routes', () => {
           title: 'my first auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: JSON.parse(JSON.stringify(date)),
+          endDate: new Date(date).toISOString(),
           __v: 0
         });
       });
@@ -94,7 +95,7 @@ describe('auction-app routes', () => {
           title: 'my first auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: JSON.parse(JSON.stringify(date)),
+          endDate: new Date(date).toISOString(),
           __v: 0
         }, {
           _id: expect.anything(),
@@ -102,7 +103,7 @@ describe('auction-app routes', () => {
           title: 'my second auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: JSON.parse(JSON.stringify(date)),
+          endDate: new Date(date).toISOString(),
           __v: 0
         }, {
           _id: expect.anything(),
@@ -110,7 +111,7 @@ describe('auction-app routes', () => {
           title: 'my third auction',
           description: 'some boring thing being sold',
           quantity: 2,
-          endDate: JSON.parse(JSON.stringify(date)),
+          endDate: new Date(date).toISOString(),
           __v: 0
         }
       ]));
@@ -160,7 +161,7 @@ describe('auction-app routes', () => {
         title: 'my fourth auction',
         description: 'some boring thing being sold',
         quantity: 2,
-        endDate: JSON.parse(JSON.stringify(date)),
+        endDate: new Date(date).toISOString(),
         bids: bids.map(bid => {
           bid._id = expect.anything();
           bid.__v = 0;
