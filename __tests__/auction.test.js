@@ -163,11 +163,35 @@ describe('auction-app routes', () => {
         description: 'some boring thing being sold',
         quantity: 2,
         endDate: new Date(date).toISOString(),
-        bids: bids.map(bid => {
-          bid._id = expect.anything();
-          bid.__v = 0;
-          return bid;
-        }),
+        bids: [
+          {
+            _id: expect.anything(),
+            auction: auction.id,
+            user: user.id,
+            price: 31,
+            quantity: 1,
+            accepted: false,
+            __v: 0
+          },
+          {
+            _id: expect.anything(),
+            auction: auction.id,
+            user: user.id,
+            price: 42,
+            quantity: 1,
+            accepted: false,
+            __v: 0
+          },
+          {
+            _id: expect.anything(),
+            auction: auction.id,
+            user: user.id,
+            price: 43,
+            quantity: 1,
+            accepted: true,
+            __v: 0
+          }
+        ],
         __v: 0
       }));
   });
