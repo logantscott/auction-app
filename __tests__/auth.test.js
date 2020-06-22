@@ -23,7 +23,7 @@ describe('auction-app routes', () => {
   
   it('can create a user', () => {
     return request(app)
-      .post('/api/v1/auth')
+      .post('/api/v1/auth/signup')
       .send({
         email: 'logan@test.com',
         password: '1234'

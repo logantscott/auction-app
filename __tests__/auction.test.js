@@ -40,6 +40,7 @@ describe('auction-app routes', () => {
   it('can create an auction', async() => {
     return request(app)
       .post('/api/v1/auctions')
+      .auth('logan@test.com', '1234')
       .send({
         user: user.id,
         title: 'my first auction',

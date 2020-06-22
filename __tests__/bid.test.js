@@ -98,6 +98,7 @@ describe('auction-app routes', () => {
   it('can create a bid', () => {
     return request(app)
       .post('/api/v1/bids')
+      .auth('user1@test.com', '1234')
       .send({
         auction: auction.id,
         user: users[0].id,
@@ -144,6 +145,7 @@ describe('auction-app routes', () => {
   it('can delete a bid', () => {
     return request(app)
       .delete(`/api/v1/bids/${bids[2].id}`)
+      .auth('user1@test.com', '1234')
       .then(res => expect(res.body).toEqual({
         _id: bids[2].id,
         auction: auction.id,
@@ -158,6 +160,7 @@ describe('auction-app routes', () => {
   it('can not create a bid on an expired auction', () => {
     return request(app)
       .post('/api/v1/bids')
+      .auth('user1@test.com', '1234')
       .send({
         auction: expiredAuction.id,
         user: users[0].id,
