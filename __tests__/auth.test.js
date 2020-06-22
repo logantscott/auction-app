@@ -20,4 +20,25 @@ describe('auction-app routes', () => {
     await mongoose.connection.close();
     return mongod.stop();
   });
+  
+  it('can create a user', () => {
+    return request(app)
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'logan@test.com',
+        password: '1234'
+      })
+      .then(res => expect(res.body).toEqual({
+        _id: expect.anything(),
+        email: 'logan@test.com',
+        // block password with toJSON transform
+        // passwordHash: expect.anything(),
+        __v: 0
+      }));
+  });
+
+  // probably the hardest route test
+  it('can authenticate a user and log them in', () => {
+    return expect('hi').toBe('hi');
+  });
 });
